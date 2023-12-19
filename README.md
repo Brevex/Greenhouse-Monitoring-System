@@ -23,6 +23,7 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
 
 <ul>
   <li>The system has 2 sensors: DHT22 for monitoring temperature and humidity and the Photoresistor (LDR) sensor for measuring luminosity;</li>
+   <li>The buzzer will sound whenever the system enters an alarm situation;</li>
   <li>Alarm conditions:</li><br>
   
   <ol>
@@ -31,7 +32,6 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
     <li>Luminosity < 500</li>
   </ol><br>
   
-  <li>The buzzer will sound whenever the system enters an alarm situation;</li>
   <li>If the system enters any alarm situation, the blue button next to the buzzer can be activated so the buzzer stops sounding;</li>
   <li>The button can also be pressed at any time to disable the alarm system if the user does not wish to be notified.</li>
 </ul>
