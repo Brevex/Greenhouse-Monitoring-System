@@ -27,7 +27,7 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
   <li>If the humidity is greater than 60%, the system will be in humidity alarm condition;</li>
   <li>If the brightness drops below 500, the system will be in brightness alarm condition;</li>
   <li>The buzzer will sound whenever the system enters an alarm situation;</li>
-  <li>If the system enters any alarm situation, the blue button next to the buzzer can be activated so that the buzzer stops sounding;</li>
+  <li>If the system enters any alarm situation, the blue button next to the buzzer can be activated so the buzzer stops sounding;</li>
   <li>The button can also be pressed at any time to disable the alarm system if the user does not wish to be notified.</li>
 </ul>
 
