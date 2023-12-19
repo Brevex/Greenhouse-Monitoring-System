@@ -38,4 +38,25 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
 
 <br><h2> &#128295; Circuit Assembly </h2>
 
+<br><div align="center">
+  
+  | Compenent           | Component Pin | ESP32 Pin |
+  |:-------------------:|:-------------:|:---------:|
+  | Photoresistor (LDR) | ldr1:AO       | esp:34    |
+  | Photoresistor (LDR) | ldr1:GND      | esp:GND.2 |
+  | Photoresistor (LDR) | ldr1:VCC      | esp:VN    |
+  | DHT22               | dht1:VCC      | esp:3V3   |
+  | DHT22               | dht1:SDA      | esp:23    |
+  | DHT22               | dht1:GND      | esp:GND.2 |
+  | LCD 20x4 (I2C)      | lcd1:GND      | esp:GND.3 |
+  | LCD 20x4 (I2C)      | lcd1:VCC      | esp:5V    |
+  | LCD 20x4 (I2C)      | lcd1:SDA      | esp:21    |
+  | LCD 20x4 (I2C)      | lcd1:SCL      | esp:22    |
+  | Buzzer              | bz1:1         | esp:GND.1 |
+  | Buzzer              | bz1:2         | esp:12    |
+  | Pushbutton          | btn1:2.r      | esp:GND.1 |
+  | Pushbutton          | btn1:1.r      | esp:14    |
+  
+</div>
+
 <br><h3 align = "center"> - By <a href = "https://www.linkedin.com/in/breno-barbosa-de-oliveira-810866275/" target = "_blank">Breno</a> - </h3>
