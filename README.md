@@ -17,6 +17,6 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
 
 <br><h2> &#128161; How it Works? </h2>
 
-<img align = "center" src="https://github.com/Brevex/Simon-Game-ESP32/blob/10970f59c60db01da064faede70820c7adb676b0/readme%20images/circuit.png" alt="circuit"><br><br>
+<img align = "center" src="https://github.com/Brevex/Greenhouse-Monitoring-System-ESP32/blob/24614c531177b1da7a8cbb55fd4107524cb6a33b/readme%20images/circuit.png" alt="circuit"><br><br>
 
 <br><h3 align = "center"> - By <a href = "https://www.linkedin.com/in/breno-barbosa-de-oliveira-810866275/" target = "_blank">Breno</a> - </h3>
