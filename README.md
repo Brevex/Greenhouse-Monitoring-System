@@ -39,6 +39,8 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
 <br><h2> &#128295; Circuit Assembly </h2>
 
 <br><div align="center">
+
+  <h3>Using ESP32 devkit-c-v4 </h3>   
   
   | Compenent           | Component Pin | ESP32 Pin |
   |:-------------------:|:-------------:|:---------:|
