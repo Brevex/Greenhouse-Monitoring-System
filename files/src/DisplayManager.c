@@ -1,4 +1,4 @@
-#include "DisplayManager.h"
+#include "../include/DisplayManager.h"
 
 void printLabelValue(const char* label, float value, int row)
 {
