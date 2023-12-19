@@ -36,4 +36,6 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
   <li>The button can also be pressed at any time to disable the alarm system if the user does not wish to be notified.</li>
 </ul>
 
+<br><h2> &#128295; Circuit Assembly </h2>
+
 <br><h3 align = "center"> - By <a href = "https://www.linkedin.com/in/breno-barbosa-de-oliveira-810866275/" target = "_blank">Breno</a> - </h3>
