@@ -21,11 +21,16 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
   <img src="https://github.com/Brevex/Greenhouse-Monitoring-System-ESP32/blob/24614c531177b1da7a8cbb55fd4107524cb6a33b/readme%20images/circuit.png" alt="circuit">
 </p><br>
 
-<ul>
+<ul style="line-height: 2">
   <li>The system has 2 sensors: DHT22 for monitoring temperature and humidity and the Photoresistor (LDR) sensor for measuring luminosity;</li>
-  <li>If the temperature drops below 10º or above 20º, the system will will be in temperature alarm condition;</li>
-  <li>If the humidity is greater than 60%, the system will be in humidity alarm condition;</li>
-  <li>If the brightness drops below 500, the system will be in brightness alarm condition;</li>
+  <li>Alarm conditions:</li>
+  
+  <ol>
+    <li>Temperature < 10º or Temperature > 20º</li>
+    <li>Humidity > 60%</li>
+    <li>Luminosity < 500</li>
+  </ol>
+      
   <li>The buzzer will sound whenever the system enters an alarm situation;</li>
   <li>If the system enters any alarm situation, the blue button next to the buzzer can be activated so the buzzer stops sounding;</li>
   <li>The button can also be pressed at any time to disable the alarm system if the user does not wish to be notified.</li>
