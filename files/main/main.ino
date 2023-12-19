@@ -1,8 +1,8 @@
-#include "Config.h"
-#include "SensorManager.h"
-#include "DisplayManager.h"
-#include "BuzzerManager.h"
-#include "ButtonManager.h"
+#include "../include/Config.h"
+#include "../include/SensorManager.h"
+#include "../include/DisplayManager.h"
+#include "../include/BuzzerManager.h"
+#include "../include/ButtonManager.h"
 
 void setup()
 {

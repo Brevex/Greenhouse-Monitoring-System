@@ -1,4 +1,4 @@
-#include "SensorManager.h"
+#include "../include/SensorManager.h"
 
 DHT dht(23, DHT22);
 
