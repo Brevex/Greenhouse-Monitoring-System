@@ -11,7 +11,7 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
 
 <p align="center">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=arduino,c" />
+    <img src="https://skillicons.dev/icons?i=arduino" />
   </a>
 </p>
 
