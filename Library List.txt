@@ -1,7 +1,0 @@
-# Wokwi Library List
-
-FreeRTOS
-DHT sensor library
-Bounce2
-LiquidCrystal I2C
-
