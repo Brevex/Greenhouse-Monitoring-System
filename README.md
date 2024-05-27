@@ -18,7 +18,7 @@ user will be warned whenever one of the conditions is inappropriate.</p><br>
 <br><h2> &#128161; How it Works? </h2>
 
 <br><p align="center">
-  <img src="https://github.com/Brevex/Greenhouse-Monitoring-System-ESP32/blob/6bad03856c61e2186c22b6914bd2c88bb742e669/circuit.png" alt="circuit">
+  <img src="https://github.com/Brevex/Greenhouse-Monitoring-System-ESP32/blob/37e82e78000d762f5efcfe2f1dc4a0e0c3f1f7b9/circuit.png" alt="circuit">
 </p><br>
 
 <ul>
