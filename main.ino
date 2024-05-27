@@ -1,231 +1,119 @@
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
 #include <DHT.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+#include <LiquidCrystal_I2C.h>
 #include <Bounce2.h>
+#include <map>
 
-enum AlertType
-{
-    NONE,
-    TEMPERATURE,
-    HUMIDITY,
-    LUMINOSITY
-};
+#define DHTPIN 23      
+#define LDRPIN 34     
+#define BUZZERPIN 12   
+#define BUTTONPIN 14   
 
-enum SystemState
-{
-    ALARM_ENABLED,
-    ALARM_DISABLED
-};
+#define DHTTYPE DHT22
 
-const char* getAlertString(AlertType alert)
-{
-    switch (alert)
-    {
-        case NONE:
-            return "None ";
-
-        case TEMPERATURE:
-            return "Temperature ";
-
-        case HUMIDITY:
-            return "Humidity ";
-
-        case LUMINOSITY:
-            return "Luminosity ";
-
-        default:
-            return "Unknown ";
-    }
-}
-
-struct SensorData
-{
-    float temperature;
-    float humidity;
-    int luminosity;
-};
-
-SensorData sensorValues;
-
-const int LDR_PIN = 34;
-const int BUZZER_PIN = 12;
-const int LUMINOSITY_THRESHOLD = 500;
-const int TEMPERATURE_LOWER_LIMIT = 10;
-const int TEMPERATURE_UPPER_LIMIT = 20;
-const int HUMIDITY_UPPER_LIMIT = 60;
-const int BUTTON_PIN = 14;
-
-const int LCD_ROW_TEMP = 0;
-const int LCD_ROW_HUMIDITY = 1;
-const int LCD_ROW_LUMINOSITY = 2;
-const int LCD_ROW_ALERT = 3;
-
-bool buzzerEnabled = true;
-
-AlertType currentAlert = NONE;
-AlertType previousAlert = NONE;
-
-DHT dht(23, DHT22);
+DHT dht(DHTPIN, DHTTYPE);
 LiquidCrystal_I2C lcd(0x27, 20, 4);
+Bounce debouncer = Bounce(); 
 
-Bounce debouncer = Bounce();
-SemaphoreHandle_t xMutex;
-TaskHandle_t buzzerTaskHandle;
-SystemState systemState = ALARM_ENABLED;
+float temperature, humidity;
+int luminosity;
+bool buzzerActive = false;
+String alert = "none";
+String previousAlert = "none";
 
-void printLabelValue(const char* label, float value, int row)
+struct AlertRule 
 {
-    int labelLength = strlen(label);
-    lcd.setCursor(0, row);
-    lcd.print(label);
-    lcd.print(value);
+  float min;
+  float max;
+  String message;
+};
 
-    if (row == LCD_ROW_ALERT)
+std::map<String, AlertRule> alertRules = {
+  {"Temperature", {10.0, 20.0, "Temperature"}},
+  {"Humidity", {0.0, 60.0, "Humidity"}},
+  {"Luminosity", {500.0, 1023.0, "Luminosity"}}
+};
+
+void readSensors() 
+{
+  humidity = dht.readHumidity();
+  temperature = dht.readTemperature();
+  luminosity = analogRead(LDRPIN);
+
+  if (isnan(humidity) || isnan(temperature)) 
+  {
+    Serial.println("Failed to read from DHT sensor!");
+  }
+}
+
+void checkAlerts() 
+{
+  alert = "none";
+  buzzerActive = false;
+
+  for (const auto& [parameter, rule] : alertRules) 
+  {
+    float value = parameter == "Temperature" ? temperature :
+                  parameter == "Humidity" ? humidity : luminosity;
+
+    if (value < rule.min || value > rule.max) 
     {
-        lcd.setCursor(labelLength, row);
-        lcd.print(getAlertString(currentAlert));
+      alert = rule.message;
+      buzzerActive = true;
+      break; 
     }
+  }
 }
 
-void readSensors(void *pvParameters)
+void updateLCD() 
 {
-    for (;;)
-    {
-        if (systemState == ALARM_ENABLED)
-        {
-            // Read LDR
-            sensorValues.luminosity = analogRead(LDR_PIN);
+  lcd.setCursor(0, 0);
+  lcd.print("Temp: " + String(temperature, 1));
+  lcd.setCursor(0, 1);
+  lcd.print("Humidity: " + String(humidity, 1));
+  lcd.setCursor(0, 2);
+  lcd.print("Luminosity: " + String(luminosity));
 
-            if (isnan(sensorValues.luminosity))
-            {
-                Serial.println(F("Failed to read from LDR sensor!"));
-            }
+  if (alert != previousAlert) 
+  {
+    lcd.setCursor(0, 3);
+    lcd.print("Alert:                "); 
 
-            // Read DHT
-            float newHumidity = dht.readHumidity();
-            float newTemperature = dht.readTemperature();
+    lcd.setCursor(0, 3);
+    lcd.print("Alert: " + alert);
 
-            if (!isnan(newHumidity) && !isnan(newTemperature))
-            {
-                sensorValues.humidity = newHumidity;
-                sensorValues.temperature = newTemperature;
-            }
-            else
-            {
-                Serial.println("Failed to read from DHT sensor!");
-            }
-
-            xSemaphoreTake(xMutex, portMAX_DELAY);
-            if (sensorValues.luminosity < LUMINOSITY_THRESHOLD)
-            {
-                currentAlert = LUMINOSITY;
-            }
-            else if (sensorValues.temperature < TEMPERATURE_LOWER_LIMIT || sensorValues.temperature > TEMPERATURE_UPPER_LIMIT || sensorValues.humidity > HUMIDITY_UPPER_LIMIT)
-            {
-                currentAlert = (sensorValues.temperature < TEMPERATURE_LOWER_LIMIT || sensorValues.temperature > TEMPERATURE_UPPER_LIMIT) ? TEMPERATURE : HUMIDITY;
-            }
-            else
-            {
-                currentAlert = NONE;
-            }
-            xSemaphoreGive(xMutex);
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+    previousAlert = alert;
+  }
 }
 
-void displayTask(void *pvParameters)
+void handleBuzzer() 
 {
-    for (;;)
-    {
-        xSemaphoreTake(xMutex, portMAX_DELAY);
+  if (buzzerActive && debouncer.fell()) 
+  {
+    buzzerActive = false;
+  }
 
-        // Limpa completamente a linha "Alert" antes de atualizar
-        lcd.setCursor(7, LCD_ROW_ALERT);
-        lcd.print("                  ");
-
-        // Define os rótulos e valores para exibição
-        const char* labels[] = {"Temp: ", "Humidity: ", "Luminosity: ", "Alert: "};
-        float values[] = {sensorValues.temperature, sensorValues.humidity, sensorValues.luminosity, static_cast<float>(currentAlert)};
-
-        for (int i = 0; i < 4; ++i)
-        {
-            printLabelValue(labels[i], values[i], i);
-        }
-
-        xSemaphoreGive(xMutex);
-
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+  digitalWrite(BUZZERPIN, buzzerActive);
 }
 
-void buzzerTone(void *pvParameters)
+void setup() 
 {
-    for (;;)
-    {
-        if (currentAlert != NONE && buzzerEnabled)
-        {
-            Serial.println(F("ALERT!"));
+  Serial.begin(115200);
 
-            tone(BUZZER_PIN, 1000);
-            vTaskDelay(pdMS_TO_TICKS(500));
-            noTone(BUZZER_PIN);
-            vTaskDelay(pdMS_TO_TICKS(500));
-        }
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
+  dht.begin();
+  lcd.init();
+  lcd.backlight();
+
+  pinMode(BUZZERPIN, OUTPUT);
+
+  debouncer.attach(BUTTONPIN, INPUT_PULLUP);
+  debouncer.interval(5);
 }
 
-void buttonTask(void *pvParameters)
+void loop() 
 {
-    for (;;)
-    {
-        if (debouncer.update())
-        {
-            if (debouncer.fell())
-            {
-                systemState = (systemState == ALARM_ENABLED) ? ALARM_DISABLED : ALARM_ENABLED;
-
-                xSemaphoreTake(xMutex, portMAX_DELAY);
-                buzzerEnabled = (systemState == ALARM_ENABLED);
-                xSemaphoreGive(xMutex);
-
-                if (!buzzerEnabled)
-                {
-                    noTone(BUZZER_PIN);
-                }
-            }
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
+  readSensors();
+  checkAlerts();
+  updateLCD();
+  handleBuzzer();
+  debouncer.update();
 }
-
-void setup()
-{
-    ledcSetup(0, 1000, 10);
-    pinMode(BUZZER_PIN, OUTPUT);
-    pinMode(LDR_PIN, INPUT);
-    Serial.begin(9600);
-
-    dht.begin();
-    lcd.init();
-    lcd.backlight();
-    lcd.setCursor(0, 0);
-
-    xMutex = xSemaphoreCreateMutex();
-
-    xTaskCreatePinnedToCore(readSensors, "TaskReadSensors", 10000, NULL, 1, NULL, 1);
-    xTaskCreatePinnedToCore(buzzerTone, "TaskBuzzerTone", 10000, NULL, 1, &buzzerTaskHandle, 0);
-    xTaskCreatePinnedToCore(displayTask, "TaskDisplay", 10000, NULL, 1, NULL, 1);
-    xTaskCreatePinnedToCore(buttonTask, "TaskButton", 10000, NULL, 1, NULL, 0);
-
-    pinMode(BUTTON_PIN, INPUT_PULLUP);
-    debouncer.attach(BUTTON_PIN);
-    debouncer.interval(50);
-}
-
-void loop(){}
