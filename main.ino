@@ -67,7 +67,7 @@ void checkAlerts()
 void updateLCD() 
 {
   lcd.setCursor(0, 0);
-  lcd.print("Temp: " + String(temperature, 1));
+  lcd.print("Temperature: " + String(temperature, 1));
   lcd.setCursor(0, 1);
   lcd.print("Humidity: " + String(humidity, 1));
   lcd.setCursor(0, 2);
