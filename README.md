@@ -2,7 +2,7 @@
 
 <h2> &#128269; About the project </h2><br>
 
-<p>A simple greenhouse monitoring system made in ESP32. The system detects possible risks for plants, such as: temperature, humidity and light. The 
+<p>A simple greenhouse monitoring system made with ESP32. The system detects possible risks for plants, such as: temperature, humidity and light. The 
 user will be warned whenever one of the conditions is inappropriate. In addition to showing sensor data on the display, the project also sends the 
 data to a dashboard on the adafruit.io platform via an MQTT connection.</p><br>
 
