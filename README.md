@@ -13,6 +13,14 @@ user will be warned whenever one of the conditions is inappropriate. The system 
   </a>
 </p>
 
+<br><h2> &#128187; Website </h2>
+
+<p>The website displays a table that breaks down the data received by the system, updating its value in real time. To improve scalability, the table will grow dynamically as new sensors are added to the system.</p><br>
+
+<p align="center">
+  <img src="https://github.com/Brevex/Greenhouse-Monitoring-System/blob/d989b371f4527a3b9bee1dc0102bf2eb5ee26174/Readme%20Images/site.png" alt="circuit">
+</p>
+
 <br><h2> &#128161; How it Works? </h2>
 
 <br><p align="center">
