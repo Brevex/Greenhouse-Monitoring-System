@@ -15,4 +15,8 @@ public class SensorData
     private Long id;
     private String topic;
     private String payload;
+    private Double minValue;
+    private Double maxValue;
+    private Double currentValue;
+    private String alarmMessage;
 }

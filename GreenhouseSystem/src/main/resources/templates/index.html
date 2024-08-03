@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Sensor Data</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+</head>
+
+<body>
+<div class="container">
+    <h1>Sensor Data</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Sensor</th>
+            <th>Min Value</th>
+            <th>Max Value</th>
+            <th>Current Value</th>
+            <th>Alarm Message</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="data : ${sensorData}">
+            <td th:text="${data.name}">Sensor Name</td>
+            <td th:text="${data.minValue}">0</td>
+            <td th:text="${data.maxValue}">0</td>
+            <td th:text="${data.currentValue}">0</td>
+            <td th:text="${data.alarmMessage}">OK</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
