@@ -5,8 +5,6 @@
 <p>A simple greenhouse monitoring system made with ESP32. The system detects possible risks for plants, such as: temperature, humidity and light. The 
 user will be warned whenever one of the conditions is inappropriate. The system also sends the data to a full stack application via an MQTT connection.</p><br>
 
-<p align = "center"><b>| TEST BY <a href="https://wokwi.com/projects/383967622942753793" target="_blank">CLICKING HERE</a> |</b></p><br>
-
 <h2> &#128302; Technologies Used </h2><br>
 
 <p align="center">
