@@ -1,17 +1,16 @@
-#include <WiFi.h>
-#include <Adafruit_MQTT.h>
-#include <Adafruit_MQTT_Client.h>
-#include <DHT.h>
-#include <LiquidCrystal_I2C.h>
-#include <Bounce2.h>
 #include <map>
+#include <DHT.h>
+#include <WiFi.h>
+#include <Bounce2.h>
+#include <PubSubClient.h>
+#include <LiquidCrystal_I2C.h>
 
-#define WIFI_SSID       "Wokwi-GUEST" // Default Wokwi wifi login
+#define WIFI_SSID       ""
 #define WIFI_PASSWORD   ""
-#define AIO_SERVER      "io.adafruit.com"
-#define AIO_USERNAME    "" // Change to your respective login
-#define AIO_KEY         "" // Change to your respective key
-#define AIO_SERVERPORT  1883
+#define MQTT_SERVER     "" 
+#define MQTT_PORT       0000 
+#define MQTT_USER       ""
+#define MQTT_PASSWORD   ""
 
 #define DHTPIN 23
 #define LDRPIN 34
@@ -26,16 +25,12 @@ Bounce debouncer = Bounce();
 
 float temperature, humidity;
 int luminosity;
-bool buzzerActive = false;
-String alert = "none";
+bool buzzerActive    = false;
+String alert         = "none";
 String previousAlert = "none";
 
-// Change to your Adafruit.io feeds
-WiFiClient client;
-Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
-Adafruit_MQTT_Publish temperatureFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/temperature");
-Adafruit_MQTT_Publish humidityFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/humidity");
-Adafruit_MQTT_Publish luminosityFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/luminosity");
+WiFiClient espClient;
+PubSubClient client(espClient);
 
 struct AlertRule 
 {
@@ -52,9 +47,9 @@ std::map<String, AlertRule> alertRules = {
 
 void readSensors() 
 {
-  humidity = dht.readHumidity();
+  humidity    = dht.readHumidity();
   temperature = dht.readTemperature();
-  luminosity = analogRead(LDRPIN);
+  luminosity  = analogRead(LDRPIN);
 
   if (isnan(humidity) || isnan(temperature)) 
   {
@@ -128,21 +123,22 @@ void connectWiFi()
 
 void connectMQTT() 
 {
-  int8_t ret;
-
-  if (mqtt.connected()) { return; }
-
-  Serial.print("Connecting to MQTT... ");
-
-  while ((ret = mqtt.connect()) != 0) 
+  while (!client.connected()) 
   {
-    Serial.println(mqtt.connectErrorString(ret));
-    Serial.println("Retrying MQTT connection in 5 seconds...");
-    mqtt.disconnect();
-    delay(5000);
-  }
+    Serial.print("Connecting to MQTT... ");
 
-  Serial.println("MQTT Connected!");
+    if (client.connect("ESP32Client", MQTT_USER, MQTT_PASSWORD)) 
+    {
+      Serial.println("connected!");
+    } 
+    else 
+    {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(5000);
+    }
+  }
 }
 
 void setup() 
@@ -159,7 +155,7 @@ void setup()
   debouncer.interval(5);
 
   connectWiFi();
-  connectMQTT();
+  client.setServer(MQTT_SERVER, MQTT_PORT);
 }
 
 void loop() 
@@ -175,14 +171,22 @@ void loop()
     connectWiFi();
   }
 
-  connectMQTT();
-
-  if (!mqtt.ping()) 
+  if (!client.connected()) 
   {
-    mqtt.disconnect();
+    connectMQTT();
   }
 
-  temperatureFeed.publish(temperature);
-  humidityFeed.publish(humidity);
-  luminosityFeed.publish(luminosity);
+  client.loop();
+
+  char message[50];
+  snprintf(message, 50, "Temperature: %f", temperature);
+  client.publish("topico-dos-sensores/temperature", message);
+
+  snprintf(message, 50, "Humidity: %f", humidity);
+  client.publish("topico-dos-sensores/humidity", message);
+
+  snprintf(message, 50, "Luminosity: %d", luminosity);
+  client.publish("topico-dos-sensores/luminosity", message);
+
+  delay(2000); 
 }
