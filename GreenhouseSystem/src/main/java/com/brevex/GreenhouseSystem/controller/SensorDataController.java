@@ -1,18 +1,14 @@
 package com.brevex.GreenhouseSystem.controller;
 
-import com.brevex.GreenhouseSystem.model.SensorDataDTO;
 import com.brevex.GreenhouseSystem.service.SensorDataService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/sensor-data")
+@Controller
+@RequestMapping("/sensor-data")
 public class SensorDataController
 {
     private final SensorDataService sensorDataService;
@@ -24,15 +20,9 @@ public class SensorDataController
     }
 
     @GetMapping
-    public List<SensorDataDTO> getAllSensorData()
+    public String getAllSensorData(Model model)
     {
-        return sensorDataService.getAllSensorData();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<SensorDataDTO> getSensorDataById(@PathVariable Long id)
-    {
-        SensorDataDTO sensorData = sensorDataService.getSensorDataById(id);
-        return ResponseEntity.ok(sensorData);
+        model.addAttribute("sensorData", sensorDataService.getAllSensorData());
+        return "index";
     }
 }
