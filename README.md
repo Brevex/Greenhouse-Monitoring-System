@@ -8,8 +8,8 @@ user will be warned whenever one of the conditions is inappropriate. The system 
 <h2> &#128302; Technologies Used </h2><br>
 
 <p align="center">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=java,spring,postgres,arduino" />
+  <a href="https://github.com/syvixor/skills-icons">
+	  <img src="https://skills.syvixor.com/api/icons?i=java,spring,postgresql,arduino" alt="Skills">
   </a>
 </p>
 
